@@ -7,6 +7,9 @@ interface SavedCharacterDAO {
     @Query("SELECT * FROM SavedCharacters")
     fun getAll(): List<SavedCharacter>
 
+    @Query("select * from SavedCharacters where lodestone_id = :id")
+    fun getById(id: Long): SavedCharacter?
+
     @Insert
     fun insert(character: SavedCharacter): Long
 

@@ -1,57 +1,116 @@
 package hu.tsukiakari.xiv.characterDetails
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import hu.tsukiakari.xiv.R
+import android.util.Log
+import android.view.Display
+import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.google.gson.Gson
+import hu.tsukiakari.xiv.characterDetails.adapter.CharacterJobsAdapter
+import hu.tsukiakari.xiv.characterDetails.model.JobExtended
 import hu.tsukiakari.xiv.databinding.ActivityCharacterDetailsBinding
-import hu.tsukiakari.xiv.network.XIVApi
 import hu.tsukiakari.xiv.network.model.lodestone.LodestoneCharacter
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import hu.tsukiakari.xiv.network.model.lodestone.LodestoneResponse
 
-class CharacterDetailsActivity : AppCompatActivity() {
+class CharacterDetailsActivity : AppCompatActivity(), CharacterDataHolder {
     companion object {
-        const val EXTRA_LODESTONE_ID = "LODESTONE_ID"
+        const val CHARACTER_JSON = "lodestoneJsonData"
     }
 
     private lateinit var binding: ActivityCharacterDetailsBinding
-    private var character: LodestoneCharacter? = null
-    private var lodestone_id: Long? = null
+    private var lodestoneJsonData: String? = null
+    private var data: LodestoneResponse? = null
+
+    private lateinit var jobsAdapter: CharacterJobsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCharacterDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        lodestone_id = intent.getLongExtra("LODESTONE_ID", 0)
+        val gson = Gson()
+        lodestoneJsonData = intent.getStringExtra(CHARACTER_JSON)
+        Log.i("Received data", lodestoneJsonData.toString())
 
-        fetchLodestoneData()
+        data = gson.fromJson(lodestoneJsonData, LodestoneResponse::class.java)
 
-        //supportActionBar?.title = "$lodestone_id"
+        supportActionBar?.title = "Character Details"
+
+        // Fill data
+        createHeader()
+        createDetailsTable()
+        createJobsList()
     }
 
-    private fun displayLodestoneData(lodestoneCharacter: LodestoneCharacter?) {
-        character = lodestoneCharacter
+    override fun getCharacterData(): LodestoneCharacter? {
+        return data!!.character
     }
 
-    private fun fetchLodestoneData() {
-        var lodestoneResult: LodestoneCharacter? = null
+    private fun createHeader() {
+        binding.detailsName.text = data!!.character.name
+        binding.detailsActiveJob.text = "Lv. ${ data!!.character.activeClassJob.level} ${data!!.character.activeClassJob.unlockedState.name}"
+        binding.detailsActiveJobIcon.setBackgroundResource(
+            matchJobToResource(data!!.character.activeClassJob.unlockedState.name)
+        )
 
-        XIVApi.getLodestone(lodestone_id!!)?.enqueue(object : Callback<LodestoneCharacter?> {
-            override fun onResponse(call: Call<LodestoneCharacter?>, res: Response<LodestoneCharacter?>) {
-                if (res.isSuccessful) {
-                    displayLodestoneData(res.body())
-                }
-                else {
-                    Snackbar.make(binding.root, "Error: Character not found!", Snackbar.LENGTH_LONG).show()
-                }
-            }
-
-            override fun onFailure(call: Call<LodestoneCharacter?>, t: Throwable) {
-                Snackbar.make(binding.root, R.string.lodestone_request_failed, Snackbar.LENGTH_LONG).show()
-            }
-        })
+        Glide.with(binding.root)
+            .load(data!!.character.avatar)
+            .transition(DrawableTransitionOptions().crossFade())
+            .into(binding.detailsAvatar)
     }
+
+    private fun createDetailsTable() {
+        val ch = data!!.character
+        binding.detailsTableDcServer.text = "${ch.dataCenter} - ${ch.server}"
+
+        val tribe = if (ch.tribe?.Name == null || ch.tribe.Name.isEmpty()) "" else " - ${ch.tribe.Name}"
+        binding.detailsTableRaceAndTribe.text = "${ch.race.Name}$tribe"
+
+        binding.detailsTableNameDay.text = ch.nameday
+
+        binding.detailsTableDeityName.text = ch.guardianDeity.Name
+        Glide.with(binding.root)
+            .load("https://xivapi.com/${ ch.guardianDeity.Icon }")
+            .into(binding.detailsTableDeityIcon)
+
+        binding.detailsTableTownName.text = ch.town.Name
+        Glide.with(binding.root)
+            .load("https://xivapi.com/${ ch.town.Icon }")
+            .into(binding.detailsTableTownIcon)
+
+        if (ch.grandCompany.company == null || ch.grandCompany.rank == null) {
+            binding.detailsTableRowCompany.visibility = View.GONE
+        }
+        else {
+            binding.detailsTableCompanyName.text = ch.grandCompany.company.Name
+            binding.detailsTableCompanyRankName.text = ch.grandCompany.rank.Name
+            Glide.with(binding.root)
+                .load("https://xivapi.com/${ ch.grandCompany.rank.Icon }")
+                .into(binding.detailsTableCompanyRankIcon)
+        }
+    }
+
+    private fun createJobsList() {
+        jobsAdapter = CharacterJobsAdapter(this)
+        binding.jobsList.layoutManager = LinearLayoutManager(this)
+        binding.jobsList.adapter = jobsAdapter
+
+        runOnUiThread {
+            // Create JobExtended list with proper resource ID-s for images
+            jobsAdapter.createList(data!!.character.classJobs.map { it -> JobExtended(it, matchJobToResource(it.unlockedState.name)) })
+        }
+    }
+
+    @SuppressLint("DiscouragedApi")
+    private fun matchJobToResource(job: String) =
+        resources.getIdentifier(
+            // Blue Mage (Limited Class) is a special case
+            if (job.contains("Blue Mage")) { "bluemage" }
+            else { job.filterNot{ it.isWhitespace() }.lowercase() },
+            "drawable", packageName
+        )
 }

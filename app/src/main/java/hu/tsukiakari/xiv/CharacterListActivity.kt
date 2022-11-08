@@ -2,9 +2,11 @@ package hu.tsukiakari.xiv
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.Gson
 import hu.tsukiakari.xiv.adapter.SavedCharacterAdapter
 import hu.tsukiakari.xiv.characterDetails.CharacterDetailsActivity
 import hu.tsukiakari.xiv.data.SavedCharacter
@@ -12,6 +14,7 @@ import hu.tsukiakari.xiv.data.SavedCharacterDatabase
 import hu.tsukiakari.xiv.databinding.ActivityCharacterListBinding
 import hu.tsukiakari.xiv.network.XIVApi
 import hu.tsukiakari.xiv.network.model.character.CharacterResult
+import hu.tsukiakari.xiv.network.model.lodestone.LodestoneResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -33,6 +36,8 @@ class CharacterListActivity
         setContentView(binding.root)
 
         database = SavedCharacterDatabase.getDatabase(applicationContext)
+
+        supportActionBar?.title = "Your Characters"
 
         initFab()
         initRecyclerView()
@@ -62,10 +67,31 @@ class CharacterListActivity
 
     override fun onCharacterSelected(character: SavedCharacter?) {
         if (character != null) {
-            val characterDetailsIntent = Intent()
-            characterDetailsIntent.setClass(this@CharacterListActivity, CharacterDetailsActivity::class.java)
-            characterDetailsIntent.putExtra(CharacterDetailsActivity.EXTRA_LODESTONE_ID, character.lodestoneID)
-            startActivity(characterDetailsIntent)
+            Snackbar.make(binding.root, "Loading character data for ${character.name}...", Snackbar.LENGTH_LONG).show()
+
+            XIVApi.getLodestone(character.lodestoneID)?.enqueue(object : Callback<LodestoneResponse?> {
+                override fun onResponse(call: Call<LodestoneResponse?>, res: Response<LodestoneResponse?>) {
+                    if (res.isSuccessful) {
+                        // At this point we can & should update the last known active job for the saved character
+                        val lastActiveJob = res.body()!!.character.activeClassJob
+                        updateSavedCharacter(character.lodestoneID, lastActiveJob.unlockedState.name, lastActiveJob.level, res.body()!!.character.avatar)
+
+                        val gson = Gson()
+                        val characterDetailsIntent = Intent()
+                        characterDetailsIntent.setClass(this@CharacterListActivity, CharacterDetailsActivity::class.java)
+                        characterDetailsIntent.putExtra(CharacterDetailsActivity.CHARACTER_JSON, gson.toJson(res.body()))
+                        startActivity(characterDetailsIntent)
+                    }
+                    else {
+                        /* If we somehow reach this point something's really bad anyway */
+                        Snackbar.make(binding.root, "Error: Character not found!", Snackbar.LENGTH_LONG).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<LodestoneResponse?>, t: Throwable) {
+                    Snackbar.make(binding.root, R.string.lodestone_request_failed, Snackbar.LENGTH_LONG).show()
+                }
+            })
         }
     }
 
@@ -112,5 +138,19 @@ class CharacterListActivity
                 Snackbar.make(binding.root, R.string.add_character_fail_request, Snackbar.LENGTH_LONG).show()
             }
         })
+    }
+
+    private fun updateSavedCharacter(lodestone_id: Long, job_name: String, job_level: Int, avatar: String) {
+        thread {
+            val saved = database.savedCharacterDao().getById(lodestone_id)
+            Log.i("Query Result", saved.toString())
+            saved!!.jobName = job_name
+            saved.jobLevel = job_level
+            saved.avatar = avatar
+
+            database.savedCharacterDao().update(saved)
+        }
+
+        loadSavedCharacters()
     }
 }

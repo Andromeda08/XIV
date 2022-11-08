@@ -1,4 +1,4 @@
-package hu.tsukiakari.xiv.network.model.lodestone
+package hu.tsukiakari.xiv.network.model.lodestone.details
 
 import com.google.gson.annotations.SerializedName
 

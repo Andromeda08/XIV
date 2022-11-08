@@ -1,7 +1,7 @@
 package hu.tsukiakari.xiv.network
 
 import hu.tsukiakari.xiv.network.model.character.CharacterResult
-import hu.tsukiakari.xiv.network.model.lodestone.LodestoneCharacter
+import hu.tsukiakari.xiv.network.model.lodestone.LodestoneResponse
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -14,6 +14,7 @@ interface CharacterApi {
 
     @GET("character/{id}")
     fun getLodestone(
-        @Path("id") id: String,
-    ): Call<LodestoneCharacter?>?
+        @Path("id") id: Long,
+        @Query("extended") value: Int
+    ): Call<LodestoneResponse?>?
 }

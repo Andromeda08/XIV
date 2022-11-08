@@ -10,5 +10,15 @@
     <string name="add_character_cancel_btn">Cancel</string>
     <string name="add_character_fail_not_found">Character not found!</string>
     <string name="add_character_fail_request">Request failed!</string>
+
+    <string name="details_table_server">Server</string>
+    <string name="details_table_town">Town</string>
+    <string name="details_table_name_day">Name Day</string>
+    <string name="details_table_guardian">Guardian Deity</string>
+    <string name="details_table_race">Race</string>
+    <string name="details_table_company">Grand Company</string>
+
+    <string name="character_details_jobs">Jobs</string>
+
     <string name="lodestone_request_failed">Failed to fetch character data!</string>
 </resources>

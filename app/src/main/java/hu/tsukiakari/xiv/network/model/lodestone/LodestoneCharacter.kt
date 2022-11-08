@@ -1,6 +1,7 @@
 package hu.tsukiakari.xiv.network.model.lodestone
 
 import com.google.gson.annotations.SerializedName
+import hu.tsukiakari.xiv.network.model.lodestone.details.*
 
 data class LodestoneCharacter(
     @SerializedName("ActiveClassJob")
@@ -18,17 +19,11 @@ data class LodestoneCharacter(
     @SerializedName("DC")
     val dataCenter: String,
 
-    @SerializedName("FreeCompanyId")
-    val freeCompanyID: Long?,
-
-    @SerializedName("FreeCompanyName")
-    val freeCompanyName: String?,
+    @SerializedName("Server")
+    val server: String,
 
     @SerializedName("Gender")
     val gender: Int,
-
-    //@SerializedName("GrandCompany")
-    //val grandCompany: GrandCompany,
 
     val ID: Long,
 
@@ -44,9 +39,21 @@ data class LodestoneCharacter(
     @SerializedName("Portrait")
     val portrait: String,
 
-    @SerializedName("Race")
-    val race: Int,
+    @SerializedName("GrandCompany")
+    val grandCompany: GrandCompany,
 
-    @SerializedName("Server")
-    val server: String,
+    @SerializedName("GuardianDeity")
+    val guardianDeity: GuardianDeity,
+
+    @SerializedName("Race")
+    val race: Race,
+
+    @SerializedName("Title")
+    val title: Title,
+
+    @SerializedName("Town")
+    val town: Town,
+
+    @SerializedName("Tribe")
+    val tribe: Tribe?
 )
