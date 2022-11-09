@@ -2,15 +2,15 @@
     <!-- Base application theme. -->
     <style name="Theme.XIV" parent="Theme.Material3.Dark">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/material_dynamic_primary70</item>
-        <item name="colorPrimaryVariant">@color/material_dynamic_primary70</item>
+        <item name="colorPrimary">@color/blurple</item>
+        <item name="colorPrimaryVariant">@color/blurple</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/material_dynamic_primary30</item>
-        <item name="colorSecondaryVariant">@color/material_dynamic_primary30</item>
+        <item name="colorSecondary">@color/dark_blurple</item>
+        <item name="colorSecondaryVariant">@color/dark_blurple</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor">@color/blurple</item>
         <!-- Customize your theme here. -->
         <item name="android:textColor">@color/zinc_50</item>
     </style>

@@ -1,4 +1,4 @@
-package hu.tsukiakari.xiv
+package hu.tsukiakari.xiv.characterList
 
 import android.app.AlertDialog
 import android.app.Dialog
@@ -6,6 +6,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.fragment.app.DialogFragment
+import hu.tsukiakari.xiv.R
 import hu.tsukiakari.xiv.databinding.DialogAddCharacterBinding
 import java.lang.RuntimeException
 

@@ -1,4 +1,4 @@
-package hu.tsukiakari.xiv.data
+package hu.tsukiakari.xiv.characterList.data
 
 import android.text.Editable
 import androidx.room.ColumnInfo

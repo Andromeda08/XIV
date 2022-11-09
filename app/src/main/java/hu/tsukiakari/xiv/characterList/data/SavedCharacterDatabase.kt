@@ -1,4 +1,4 @@
-package hu.tsukiakari.xiv.data
+package hu.tsukiakari.xiv.characterList.data
 
 import android.content.Context
 import androidx.room.Database

@@ -7,10 +7,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
-import hu.tsukiakari.xiv.adapter.SavedCharacterAdapter
+import hu.tsukiakari.xiv.characterList.adapter.SavedCharacterAdapter
 import hu.tsukiakari.xiv.characterDetails.CharacterDetailsActivity
-import hu.tsukiakari.xiv.data.SavedCharacter
-import hu.tsukiakari.xiv.data.SavedCharacterDatabase
+import hu.tsukiakari.xiv.characterList.AddCharacterDialogFragment
+import hu.tsukiakari.xiv.characterList.data.SavedCharacter
+import hu.tsukiakari.xiv.characterList.data.SavedCharacterDatabase
 import hu.tsukiakari.xiv.databinding.ActivityCharacterListBinding
 import hu.tsukiakari.xiv.network.XIVApi
 import hu.tsukiakari.xiv.network.model.character.CharacterResult
@@ -56,6 +57,9 @@ class CharacterListActivity
         loadSavedCharacters()
     }
 
+    /**
+     * Loads saved characters from db
+     */
     private fun loadSavedCharacters() {
         thread {
             val items = database.savedCharacterDao().getAll()
@@ -65,6 +69,9 @@ class CharacterListActivity
         }
     }
 
+    /**
+     * When selecting a character fetch their lodestone data, then change activities
+     */
     override fun onCharacterSelected(character: SavedCharacter?) {
         if (character != null) {
             Snackbar.make(binding.root, "Loading character data for ${character.name}...", Snackbar.LENGTH_LONG).show()
@@ -95,6 +102,9 @@ class CharacterListActivity
         }
     }
 
+    /**
+     * Remove character from db and list
+     */
     override fun onCharacterDeleted(character: SavedCharacter?) {
         thread {
             if (character != null) {
@@ -106,6 +116,9 @@ class CharacterListActivity
         }
     }
 
+    /**
+     * Fetch basic character data, then persist & add to list
+     */
     override fun onCharacterAdded(name: String, server: String) {
         var characterResult: CharacterResult? = null
 
@@ -140,6 +153,9 @@ class CharacterListActivity
         })
     }
 
+    /**
+     * Updates saved character job information and avatar.
+     */
     private fun updateSavedCharacter(lodestone_id: Long, job_name: String, job_level: Int, avatar: String) {
         thread {
             val saved = database.savedCharacterDao().getById(lodestone_id)

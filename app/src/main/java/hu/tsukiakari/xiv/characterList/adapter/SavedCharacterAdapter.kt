@@ -1,4 +1,4 @@
-package hu.tsukiakari.xiv.adapter
+package hu.tsukiakari.xiv.characterList.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import hu.tsukiakari.xiv.R
-import hu.tsukiakari.xiv.data.SavedCharacter
+import hu.tsukiakari.xiv.characterList.data.SavedCharacter
 import hu.tsukiakari.xiv.databinding.ItemCharacterBinding
 
 class SavedCharacterAdapter(
