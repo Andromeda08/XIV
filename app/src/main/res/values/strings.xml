@@ -11,6 +11,8 @@
     <string name="add_character_fail_not_found">Character not found!</string>
     <string name="add_character_fail_request">Request failed!</string>
 
+    <string name="character_list_server_placeholder">@Moogle [Chaos]</string>
+
     <string name="details_table_server">Server</string>
     <string name="details_table_town">Town</string>
     <string name="details_table_name_day">Name Day</string>

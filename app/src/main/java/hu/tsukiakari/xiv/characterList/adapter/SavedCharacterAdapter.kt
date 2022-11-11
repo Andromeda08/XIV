@@ -9,6 +9,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import hu.tsukiakari.xiv.R
 import hu.tsukiakari.xiv.characterList.data.SavedCharacter
 import hu.tsukiakari.xiv.databinding.ItemCharacterBinding
+import hu.tsukiakari.xiv.utility.matchJobToResource
 
 class SavedCharacterAdapter(
     private val listener: OnCharacterSelectedListener
@@ -33,6 +34,7 @@ class SavedCharacterAdapter(
             binding.characterName.text = item!!.name
             binding.characterDetails.text = "Lv. ${ item!!.jobLevel } ${ item!!.jobName}"
             binding.characterServer.text = "@${item!!.server}"
+            binding.characterJobIcon.setBackgroundResource(matchJobToResource(itemView.context, item!!.jobName))
             Glide.with(itemView)
                 .load(item!!.avatar)
                 .transition(DrawableTransitionOptions().crossFade())

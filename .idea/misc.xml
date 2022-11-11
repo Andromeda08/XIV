@@ -21,6 +21,8 @@
         <entry key="..\:/Users/andromeda/Desktop/MobWeb/viauac00-lab-2022-01-android-helloworld-Andromeda08/XIV/app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="..\:/Users/andromeda/Desktop/MobWeb/viauac00-lab-2022-01-android-helloworld-Andromeda08/XIV/app/src/main/res/layout/dialog_add_character.xml" value="0.5" />
         <entry key="..\:/Users/andromeda/Desktop/MobWeb/viauac00-lab-2022-01-android-helloworld-Andromeda08/XIV/app/src/main/res/layout/item_character.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/activity_character_details.xml" value="0.2776268115942029" />
+        <entry key="app/src/main/res/layout/activity_character_list.xml" value="0.37566605719967167" />
       </map>
     </option>
   </component>

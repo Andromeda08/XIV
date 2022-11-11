@@ -1,10 +1,8 @@
 package hu.tsukiakari.xiv.characterDetails
 
-import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.Display
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -15,6 +13,7 @@ import hu.tsukiakari.xiv.characterDetails.model.JobExtended
 import hu.tsukiakari.xiv.databinding.ActivityCharacterDetailsBinding
 import hu.tsukiakari.xiv.network.model.lodestone.LodestoneCharacter
 import hu.tsukiakari.xiv.network.model.lodestone.LodestoneResponse
+import hu.tsukiakari.xiv.utility.matchJobToResource
 
 class CharacterDetailsActivity : AppCompatActivity(), CharacterDataHolder {
     companion object {
@@ -54,7 +53,7 @@ class CharacterDetailsActivity : AppCompatActivity(), CharacterDataHolder {
         binding.detailsName.text = data!!.character.name
         binding.detailsActiveJob.text = "Lv. ${ data!!.character.activeClassJob.level} ${data!!.character.activeClassJob.unlockedState.name}"
         binding.detailsActiveJobIcon.setBackgroundResource(
-            matchJobToResource(data!!.character.activeClassJob.unlockedState.name)
+            matchJobToResource(this ,data!!.character.activeClassJob.unlockedState.name)
         )
 
         Glide.with(binding.root)
@@ -101,16 +100,9 @@ class CharacterDetailsActivity : AppCompatActivity(), CharacterDataHolder {
 
         runOnUiThread {
             // Create JobExtended list with proper resource ID-s for images
-            jobsAdapter.createList(data!!.character.classJobs.map { it -> JobExtended(it, matchJobToResource(it.unlockedState.name)) })
+            jobsAdapter.createList(data!!.character.classJobs.map { it -> JobExtended(it, matchJobToResource(this, it.unlockedState.name)) })
         }
     }
 
-    @SuppressLint("DiscouragedApi")
-    private fun matchJobToResource(job: String) =
-        resources.getIdentifier(
-            // Blue Mage (Limited Class) is a special case
-            if (job.contains("Blue Mage")) { "bluemage" }
-            else { job.filterNot{ it.isWhitespace() }.lowercase() },
-            "drawable", packageName
-        )
+
 }
