@@ -53,7 +53,7 @@ class CharacterDetailsActivity : AppCompatActivity(), CharacterDataHolder {
         binding.detailsName.text = data!!.character.name
         binding.detailsActiveJob.text = "Lv. ${ data!!.character.activeClassJob.level} ${data!!.character.activeClassJob.unlockedState.name}"
         binding.detailsActiveJobIcon.setBackgroundResource(
-            matchJobToResource(this ,data!!.character.activeClassJob.unlockedState.name)
+            matchJobToResource(this, data!!.character.activeClassJob.unlockedState.name)
         )
 
         Glide.with(binding.root)
